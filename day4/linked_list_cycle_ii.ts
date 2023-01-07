@@ -4,19 +4,28 @@ import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 import { ListNode } from "../common/LinkedList.ts";
 
 function detectCycle(head: ListNode | null): ListNode | null {
-  const nodeSet = new Set<ListNode>();
+  let slow = head, fast = head;
 
-  while (head !== null) {
-    if (nodeSet.has(head)) {
-      return head;
+  while (slow !== null && fast !== null && fast.next !== null) {
+    slow = slow.next;
+    fast = fast.next.next;
+
+    if (slow === fast) {
+      break;
     }
-
-    nodeSet.add(head);
-
-    head = head.next;
   }
 
-  return null;
+  if (fast === null || fast.next === null) {
+    return null;
+  }
+
+  slow = head;
+  while (slow !== fast) {
+    slow = slow!.next;
+    fast = fast!.next;
+  }
+
+  return slow;
 }
 
 Deno.test(function detectCycleTest() {
